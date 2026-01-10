@@ -107,9 +107,10 @@
 ## Phase 5: Admin Dashboard ⏳
 
 ### Database (Supabase)
-- [ ] `stores` table
-- [ ] `products` table
-- [ ] `generated_pages` table
+- [x] `stores` table
+- [x] `products` table
+- [x] `orders` table
+- [x] `generated_pages` table
 - [ ] `city_data` table
 
 ### UI

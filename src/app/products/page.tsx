@@ -1,15 +1,34 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Header, CartDrawer, Footer } from '@/components/ui';
-import { getAllProducts } from '@/lib/mock-products';
+import { createBrowserClient } from '@/lib/supabase';
 
 export const metadata = {
     title: 'Shop All Products',
     description: 'Browse our collection of NSF Certified supplements.',
 };
 
-export default function ProductsPage() {
-    const products = getAllProducts();
+// Fetch products server-side
+async function getProducts() {
+    const supabase = createBrowserClient();
+
+    const { data: products, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
+
+    return products || [];
+}
+
+export default async function ProductsPage() {
+    const products = await getProducts();
 
     // Smart redirect: If only 1 product, go directly to product detail
     if (products.length === 1) {
@@ -121,12 +140,12 @@ export default function ProductsPage() {
                                         )}
 
                                         {/* Sale badge */}
-                                        {product.compare_at_price && product.compare_at_price > product.price && (
+                                        {product.compare_at_price && Number(product.compare_at_price) > Number(product.price) && (
                                             <div
                                                 className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold text-white"
                                                 style={{ background: 'var(--color-error, #EF4444)' }}
                                             >
-                                                Save ${(product.compare_at_price - product.price).toFixed(0)}
+                                                Save ${(Number(product.compare_at_price) - Number(product.price)).toFixed(0)}
                                             </div>
                                         )}
 
@@ -142,9 +161,16 @@ export default function ProductsPage() {
                                     <div className="p-5">
                                         {/* Badges */}
                                         <div className="flex flex-wrap gap-2 mb-3">
-                                            <span className="trust-badge text-xs py-1 px-2">
-                                                NSF Certified
-                                            </span>
+                                            {product.badges?.slice(0, 2).map((badge: string, i: number) => (
+                                                <span key={i} className="trust-badge text-xs py-1 px-2">
+                                                    {badge}
+                                                </span>
+                                            ))}
+                                            {(!product.badges || product.badges.length === 0) && (
+                                                <span className="trust-badge text-xs py-1 px-2">
+                                                    NSF Certified
+                                                </span>
+                                            )}
                                         </div>
 
                                         {/* Title */}
@@ -161,14 +187,14 @@ export default function ProductsPage() {
                                                 className="text-xl font-bold"
                                                 style={{ color: 'var(--color-primary)' }}
                                             >
-                                                ${product.price.toFixed(2)}
+                                                ${Number(product.price).toFixed(2)}
                                             </span>
-                                            {product.compare_at_price && product.compare_at_price > product.price && (
+                                            {product.compare_at_price && Number(product.compare_at_price) > Number(product.price) && (
                                                 <span
                                                     className="text-sm line-through opacity-50"
                                                     style={{ color: 'var(--color-text)' }}
                                                 >
-                                                    ${product.compare_at_price.toFixed(2)}
+                                                    ${Number(product.compare_at_price).toFixed(2)}
                                                 </span>
                                             )}
                                         </div>

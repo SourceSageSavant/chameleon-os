@@ -45,16 +45,19 @@ export interface StoreDesignConfig {
 // Product types
 export interface Product {
   id: string;
-  store_id: string;
+  store_id?: string;
   title: string;
   slug: string;
   description: string;
   price: number;
-  compare_at_price?: number;
+  compare_at_price?: number | null;
   images: string[];
+  badges?: string[];
+  features?: string[];
   variants?: ProductVariant[];
   metadata?: Record<string, unknown>;
-  created_at: string;
+  created_at?: string;
+  inStock?: boolean;
 }
 
 export interface ProductVariant {

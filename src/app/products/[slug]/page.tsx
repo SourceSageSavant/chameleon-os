@@ -1,53 +1,108 @@
 'use client';
 
-import { useState, use } from 'react';
-import { notFound } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Header, CartDrawer, Footer } from '@/components/ui';
-import { getProductBySlug } from '@/lib/mock-products';
+import { createBrowserClient } from '@/lib/supabase';
 import { useCartStore } from '@/stores/cart-store';
-import type { Product, ProductVariant } from '@/types';
 
-interface ProductPageProps {
-    params: Promise<{ slug: string }>;
+interface DBProduct {
+    id: string;
+    slug: string;
+    title: string;
+    description: string | null;
+    price: number;
+    compare_at_price: number | null;
+    images: string[];
+    badges: string[];
+    is_active: boolean;
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-    // Properly unwrap the Promise using React.use()
-    const { slug } = use(params);
+export default function ProductPage() {
+    const params = useParams();
+    const slug = params.slug as string;
 
-    const product = getProductBySlug(slug);
+    const [product, setProduct] = useState<DBProduct | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-    if (!product) {
+    useEffect(() => {
+        async function fetchProduct() {
+            const supabase = createBrowserClient();
+
+            const { data, error } = await supabase
+                .from('products')
+                .select('*')
+                .eq('slug', slug)
+                .eq('is_active', true)
+                .single();
+
+            if (error || !data) {
+                setError(true);
+                setLoading(false);
+                return;
+            }
+
+            setProduct(data);
+            setLoading(false);
+        }
+
+        fetchProduct();
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <>
+                <Header
+                    logoText="CreatinePro"
+                    trustBadgeText="NSF Certified for Sport • Free Shipping Over $50"
+                    navLinks={[]}
+                />
+                <main className="section min-h-[60vh] flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--color-primary)' }}></div>
+                </main>
+                <Footer logoText="CreatinePro" />
+            </>
+        );
+    }
+
+    if (error || !product) {
         notFound();
     }
 
     return <ProductContent product={product} />;
 }
 
-function ProductContent({ product }: { product: Product }) {
-    const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-        product.variants?.[0] || null
-    );
+function ProductContent({ product }: { product: DBProduct }) {
     const [quantity, setQuantity] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
     const [isAdding, setIsAdding] = useState(false);
 
     const { addItem, openCart } = useCartStore();
 
-    const currentPrice = selectedVariant?.price || product.price;
-    const comparePrice = product.compare_at_price;
+    const currentPrice = Number(product.price);
+    const comparePrice = product.compare_at_price ? Number(product.compare_at_price) : null;
 
     const handleAddToCart = () => {
         setIsAdding(true);
 
-        // Create a product with the selected variant price
+        // Convert DB product to cart-compatible format
         const productToAdd = {
-            ...product,
+            id: product.slug,
+            slug: product.slug,
+            title: product.title,
+            description: product.description || '',
             price: currentPrice,
+            compare_at_price: comparePrice,
+            images: product.images || [],
+            badges: product.badges || [],
+            features: [],
+            variants: [],
+            inStock: true,
         };
 
-        addItem(productToAdd, quantity, selectedVariant?.id);
+        addItem(productToAdd, quantity);
 
         // Show feedback then open cart
         setTimeout(() => {
@@ -118,7 +173,6 @@ function ProductContent({ product }: { product: Product }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                             <p className="mt-4 opacity-50">Product Image</p>
-                                            <p className="text-sm opacity-30">Add images to /public/products/</p>
                                         </div>
                                     </div>
                                 )}
@@ -132,8 +186,8 @@ function ProductContent({ product }: { product: Product }) {
                                             key={idx}
                                             onClick={() => setActiveImage(idx)}
                                             className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImage === idx
-                                                    ? 'border-primary opacity-100'
-                                                    : 'border-transparent opacity-60 hover:opacity-100'
+                                                ? 'border-primary opacity-100'
+                                                : 'border-transparent opacity-60 hover:opacity-100'
                                                 }`}
                                             style={{
                                                 borderColor: activeImage === idx ? 'var(--color-primary)' : 'transparent',
@@ -155,15 +209,22 @@ function ProductContent({ product }: { product: Product }) {
                         <div className="space-y-6">
                             {/* Badges */}
                             <div className="flex flex-wrap gap-2">
-                                <span className="trust-badge">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                    NSF Certified
-                                </span>
-                                <span className="trust-badge">
-                                    🇺🇸 Made in USA
-                                </span>
+                                {product.badges?.map((badge, i) => (
+                                    <span key={i} className="trust-badge">
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                        {badge}
+                                    </span>
+                                ))}
+                                {(!product.badges || product.badges.length === 0) && (
+                                    <span className="trust-badge">
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                        NSF Certified
+                                    </span>
+                                )}
                             </div>
 
                             {/* Title */}
@@ -210,36 +271,6 @@ function ProductContent({ product }: { product: Product }) {
                                     </>
                                 )}
                             </div>
-
-                            {/* Variants */}
-                            {product.variants && product.variants.length > 0 && (
-                                <div>
-                                    <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text)' }}>
-                                        Select Size
-                                    </label>
-                                    <div className="flex flex-wrap gap-3">
-                                        {product.variants.map((variant) => (
-                                            <button
-                                                key={variant.id}
-                                                onClick={() => setSelectedVariant(variant)}
-                                                className={`px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all ${selectedVariant?.id === variant.id
-                                                        ? 'border-primary bg-primary/5'
-                                                        : 'border-gray-200 hover:border-gray-300'
-                                                    }`}
-                                                style={{
-                                                    borderColor: selectedVariant?.id === variant.id ? 'var(--color-primary)' : undefined,
-                                                    color: 'var(--color-text)',
-                                                }}
-                                            >
-                                                {variant.title}
-                                                <span className="block text-xs opacity-60 mt-1">
-                                                    ${variant.price.toFixed(2)}
-                                                </span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
 
                             {/* Quantity */}
                             <div>
