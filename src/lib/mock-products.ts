@@ -29,6 +29,7 @@ Take 2 gummies daily, preferably after your workout or with a meal.
         images: [
             '/products/creatine-gummies-1.png',
             '/products/creatine-gummies-2.png',
+            '/products/creatine-gummies-3.png',
         ],
         variants: [
             {
@@ -57,31 +58,6 @@ Take 2 gummies daily, preferably after your workout or with a meal.
             servings: 30,
             flavor: 'Mixed Berry',
             certifications: ['NSF Certified for Sport', 'GMP Certified', 'Made in USA'],
-        },
-        created_at: new Date().toISOString(),
-    },
-    {
-        id: 'creatine-gummies-bundle',
-        store_id: 'default',
-        title: 'Performance Bundle',
-        slug: 'performance-bundle',
-        description: `Get the complete athlete stack: Creatine Gummies + Free Shaker Bottle.
-
-**Bundle Includes:**
-- 1x Premium Creatine Gummies (30-day supply)
-- 1x BPA-Free Shaker Bottle (24oz)
-- Free Priority Shipping
-
-Save $15 compared to buying separately!`,
-        price: 44.99,
-        compare_at_price: 59.99,
-        images: [
-            '/products/bundle-1.png',
-        ],
-        variants: [],
-        metadata: {
-            type: 'bundle',
-            includes: ['creatine-gummies-30', 'shaker-bottle'],
         },
         created_at: new Date().toISOString(),
     },

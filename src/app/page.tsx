@@ -1,4 +1,4 @@
-import { OrganicHero, OrganicBenefits, OrganicTrust, OrganicFAQ } from "@/components/templates/organic";
+import { OrganicHero, OrganicBenefits, OrganicTrust, OrganicFAQ, OrganicTestimonials } from "@/components/templates/organic";
 import { Header, CartDrawer, Footer } from "@/components/ui";
 
 export default function Home() {
@@ -40,6 +40,12 @@ export default function Home() {
         <OrganicTrust
           title="Verified Purity"
           subtitle="In a market full of '0g creatine' scandals, we prove what's in every bottle."
+        />
+
+        {/* Testimonials Section */}
+        <OrganicTestimonials
+          title="What Athletes Are Saying"
+          subtitle="Join thousands of athletes who trust us for their training"
         />
 
         {/* FAQ Section */}
