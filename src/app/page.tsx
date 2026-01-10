@@ -28,6 +28,7 @@ export default function Home() {
           badges={['NSF Certified', 'Made in USA', '2.5g Per Gummy']}
           ctaText="Shop Now — $34.99"
           ctaLink="/products"
+          heroImage="/products/creatine-gummies-1.png"
         />
 
         {/* Benefits Section */}
