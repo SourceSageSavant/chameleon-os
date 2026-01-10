@@ -8,6 +8,9 @@ export const metadata = {
     description: 'Browse our collection of NSF Certified supplements.',
 };
 
+// Force dynamic rendering to ensure Supabase env vars are available
+export const dynamic = 'force-dynamic';
+
 // Fetch products server-side
 async function getProducts() {
     const supabase = createBrowserClient();
