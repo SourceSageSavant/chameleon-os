@@ -40,32 +40,32 @@ export function OrganicBenefits({
         {
             icon: 'shield',
             title: 'NSF Certified for Sport',
-            description: 'Every batch is third-party tested and certified for banned substance safety. Trusted by Olympic athletes.',
+            description: 'Every batch is third-party tested and certified for banned substance safety.',
         },
         {
             icon: 'lightning',
             title: '2.5g Per Gummy',
-            description: 'The highest potency gummy on the market. Get your full 5g daily dose in just 2 delicious gummies.',
+            description: 'The highest potency gummy on the market. Full 5g dose in just 2 gummies.',
         },
         {
             icon: 'beaker',
             title: 'Creapure® Creatine',
-            description: 'Made with premium German-engineered creatine monohydrate for maximum absorption and results.',
+            description: 'Premium German-engineered creatine monohydrate for maximum absorption.',
         },
         {
             icon: 'check',
             title: 'No Fillers or Junk',
-            description: 'Zero artificial colors, zero maltodextrin, zero proprietary blends. Just pure, effective ingredients.',
+            description: 'Zero artificial colors, zero maltodextrin, zero proprietary blends.',
         },
         {
             icon: 'heart',
             title: 'Easy on Your Stomach',
-            description: 'Unlike powders that cause bloating, our gummy formula is gentle and easy to digest.',
+            description: 'Unlike powders that cause bloating, our gummy formula is gentle.',
         },
         {
             icon: 'star',
             title: 'Made in the USA',
-            description: 'Manufactured in an FDA-registered, GMP-certified facility in Georgia, USA.',
+            description: 'FDA-registered, GMP-certified facility in Georgia, USA.',
         },
     ],
 }: OrganicBenefitsProps) {
@@ -73,15 +73,15 @@ export function OrganicBenefits({
         <section id="benefits" className="section" style={{ background: 'white' }}>
             <div className="container">
                 {/* Section header */}
-                <div className="text-center max-w-2xl mx-auto mb-16">
+                <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 lg:mb-16">
                     <h2
-                        className="text-3xl md:text-4xl font-bold mb-4"
+                        className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4"
                         style={{ color: 'var(--color-text)' }}
                     >
                         {title}
                     </h2>
                     <p
-                        className="text-lg opacity-70"
+                        className="text-sm sm:text-base lg:text-lg opacity-70"
                         style={{ color: 'var(--color-text)' }}
                     >
                         {subtitle}
@@ -89,11 +89,11 @@ export function OrganicBenefits({
                 </div>
 
                 {/* Benefits grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {benefits.map((benefit, index) => (
                         <div
                             key={index}
-                            className="p-6 rounded-2xl transition-all duration-300 hover:shadow-lg"
+                            className="p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl transition-all duration-300 hover:shadow-lg"
                             style={{
                                 background: 'var(--color-background)',
                                 animationDelay: `${index * 0.1}s`
@@ -101,11 +101,11 @@ export function OrganicBenefits({
                         >
                             {/* Icon */}
                             <div
-                                className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
+                                className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg lg:rounded-xl flex items-center justify-center mb-3 lg:mb-4"
                                 style={{ background: 'rgba(45, 90, 39, 0.1)' }}
                             >
                                 <svg
-                                    className="w-7 h-7"
+                                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                     style={{ color: 'var(--color-primary)' }}
@@ -116,7 +116,7 @@ export function OrganicBenefits({
 
                             {/* Title */}
                             <h3
-                                className="text-xl font-semibold mb-2"
+                                className="text-base sm:text-lg lg:text-xl font-semibold mb-1 sm:mb-2"
                                 style={{ color: 'var(--color-text)' }}
                             >
                                 {benefit.title}
@@ -124,7 +124,7 @@ export function OrganicBenefits({
 
                             {/* Description */}
                             <p
-                                className="opacity-70 leading-relaxed"
+                                className="text-sm sm:text-base opacity-70 leading-relaxed"
                                 style={{ color: 'var(--color-text)' }}
                             >
                                 {benefit.description}
@@ -134,37 +134,37 @@ export function OrganicBenefits({
                 </div>
 
                 {/* Comparison section */}
-                <div className="mt-16 p-8 rounded-2xl" style={{ background: 'var(--color-background)' }}>
+                <div className="mt-8 sm:mt-12 lg:mt-16 p-4 sm:p-6 lg:p-8 rounded-xl lg:rounded-2xl" style={{ background: 'var(--color-background)' }}>
                     <h3
-                        className="text-2xl font-bold text-center mb-8"
+                        className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 lg:mb-8"
                         style={{ color: 'var(--color-text)' }}
                     >
                         How We Compare
                     </h3>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
+                    <div className="overflow-x-auto -mx-4 sm:mx-0 scrollbar-hide">
+                        <table className="w-full min-w-[400px] text-sm sm:text-base">
                             <thead>
                                 <tr>
-                                    <th className="text-left p-4 font-semibold" style={{ color: 'var(--color-text)' }}>Feature</th>
-                                    <th className="text-center p-4 font-semibold" style={{ color: 'var(--color-primary)', background: 'rgba(45, 90, 39, 0.1)', borderRadius: '0.5rem 0.5rem 0 0' }}>Our Gummies</th>
-                                    <th className="text-center p-4 font-semibold opacity-60" style={{ color: 'var(--color-text)' }}>Competitor A</th>
-                                    <th className="text-center p-4 font-semibold opacity-60" style={{ color: 'var(--color-text)' }}>Competitor B</th>
+                                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold" style={{ color: 'var(--color-text)' }}>Feature</th>
+                                    <th className="text-center p-2 sm:p-3 lg:p-4 font-semibold whitespace-nowrap" style={{ color: 'var(--color-primary)', background: 'rgba(45, 90, 39, 0.1)', borderRadius: '0.5rem 0.5rem 0 0' }}>Our Gummies</th>
+                                    <th className="text-center p-2 sm:p-3 lg:p-4 font-semibold opacity-60 whitespace-nowrap" style={{ color: 'var(--color-text)' }}>Competitor A</th>
+                                    <th className="text-center p-2 sm:p-3 lg:p-4 font-semibold opacity-60 whitespace-nowrap" style={{ color: 'var(--color-text)' }}>Competitor B</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {[
-                                    ['Creatine per Gummy', '2.5g', '1g', '1.5g'],
-                                    ['Gummies for Full Dose', '2', '5', '4'],
+                                    ['Creatine/Gummy', '2.5g', '1g', '1.5g'],
+                                    ['Full Dose', '2', '5', '4'],
                                     ['NSF Certified', '✓', '✓', '✗'],
                                     ['Made in USA', '✓', '✗', '✓'],
-                                    ['Price per Serving', '$1.16', '$1.66', '$1.33'],
+                                    ['Per Serving', '$1.16', '$1.66', '$1.33'],
                                 ].map((row, index) => (
                                     <tr key={index} className="border-t" style={{ borderColor: 'rgba(0,0,0,0.1)' }}>
-                                        <td className="p-4 font-medium" style={{ color: 'var(--color-text)' }}>{row[0]}</td>
-                                        <td className="text-center p-4 font-bold" style={{ color: 'var(--color-primary)', background: 'rgba(45, 90, 39, 0.05)' }}>{row[1]}</td>
-                                        <td className="text-center p-4 opacity-60" style={{ color: 'var(--color-text)' }}>{row[2]}</td>
-                                        <td className="text-center p-4 opacity-60" style={{ color: 'var(--color-text)' }}>{row[3]}</td>
+                                        <td className="p-2 sm:p-3 lg:p-4 font-medium whitespace-nowrap" style={{ color: 'var(--color-text)' }}>{row[0]}</td>
+                                        <td className="text-center p-2 sm:p-3 lg:p-4 font-bold" style={{ color: 'var(--color-primary)', background: 'rgba(45, 90, 39, 0.05)' }}>{row[1]}</td>
+                                        <td className="text-center p-2 sm:p-3 lg:p-4 opacity-60" style={{ color: 'var(--color-text)' }}>{row[2]}</td>
+                                        <td className="text-center p-2 sm:p-3 lg:p-4 opacity-60" style={{ color: 'var(--color-text)' }}>{row[3]}</td>
                                     </tr>
                                 ))}
                             </tbody>

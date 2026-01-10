@@ -4,8 +4,10 @@
 export { OrganicHero } from './Hero';
 export { OrganicBenefits } from './Benefits';
 export { OrganicTrust } from './Trust';
+export { OrganicFAQ } from './FAQ';
 
 // Re-export as default template parts
 export { OrganicHero as Hero } from './Hero';
 export { OrganicBenefits as Benefits } from './Benefits';
 export { OrganicTrust as Trust } from './Trust';
+export { OrganicFAQ as FAQ } from './FAQ';
