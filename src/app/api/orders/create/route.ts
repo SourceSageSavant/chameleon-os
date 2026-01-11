@@ -91,6 +91,28 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
         }
 
+        // Decrement inventory for each line item
+        if (line_items && Array.isArray(line_items)) {
+            for (const item of line_items) {
+                if (item.product_id) {
+                    // Get current inventory
+                    const { data: product } = await supabase
+                        .from('products')
+                        .select('inventory_quantity')
+                        .eq('id', item.product_id)
+                        .single();
+
+                    if (product) {
+                        const newQuantity = Math.max(0, (product.inventory_quantity || 0) - (item.quantity || 1));
+                        await supabase
+                            .from('products')
+                            .update({ inventory_quantity: newQuantity })
+                            .eq('id', item.product_id);
+                    }
+                }
+            }
+        }
+
         // Send confirmation email (non-blocking)
         try {
             const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/orders/send-confirmation`, {

@@ -328,6 +328,57 @@ export default function EditStorePage() {
                     />
                 </div>
 
+                {/* Shipping & Tax Settings */}
+                <div className="bg-white rounded-xl p-6 border border-slate-200">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Shipping & Tax</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Flat Shipping Rate ($)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={(form as any).shipping_rate || '5.99'}
+                                onChange={(e) => setForm({ ...form, shipping_rate: parseFloat(e.target.value) } as any)}
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Free Shipping Threshold ($)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={(form as any).free_shipping_threshold || '50'}
+                                onChange={(e) => setForm({ ...form, free_shipping_threshold: parseFloat(e.target.value) } as any)}
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
+                            />
+                            <p className="text-xs text-slate-500 mt-1">Orders above this amount get free shipping</p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Tax Rate (%)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={(form as any).tax_rate || '0'}
+                                onChange={(e) => setForm({ ...form, tax_rate: parseFloat(e.target.value) } as any)}
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
+                            />
+                            <p className="text-xs text-slate-500 mt-1">Applied to all orders (e.g., 8.25 for 8.25%)</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                id="tax_included"
+                                checked={(form as any).tax_included || false}
+                                onChange={(e) => setForm({ ...form, tax_included: e.target.checked } as any)}
+                                className="w-5 h-5 rounded text-[#1e3a5f] focus:ring-[#1e3a5f]"
+                            />
+                            <label htmlFor="tax_included" className="text-sm text-slate-700">
+                                Prices include tax
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 {/* SEO */}
                 <div className="bg-white rounded-xl p-6 border border-slate-200">
                     <h2 className="text-lg font-semibold text-slate-900 mb-4">SEO Settings</h2>

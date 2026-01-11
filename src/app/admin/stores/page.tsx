@@ -56,6 +56,31 @@ export default function StoresPage() {
         fetchStores();
     }
 
+    async function cloneStore(storeId: string, storeName: string) {
+        if (!confirm(`Clone "${storeName}" with all products and discounts?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/stores/clone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ storeId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(`Store cloned! ${data.cloned.products} products, ${data.cloned.discounts} discounts copied.`);
+                fetchStores();
+            } else {
+                alert('Failed to clone store: ' + data.error);
+            }
+        } catch (error) {
+            alert('Failed to clone store');
+        }
+    }
+
     return (
         <div className="p-8">
             {/* Header */}
@@ -120,8 +145,8 @@ export default function StoresPage() {
                                 </div>
                                 <div className="absolute top-3 right-3">
                                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${store.is_active
-                                            ? 'bg-slate-100 text-indigo-700'
-                                            : 'bg-slate-100 text-slate-600'
+                                        ? 'bg-slate-100 text-indigo-700'
+                                        : 'bg-slate-100 text-slate-600'
                                         }`}>
                                         {store.is_active ? 'Active' : 'Inactive'}
                                     </span>
@@ -151,11 +176,20 @@ export default function StoresPage() {
                                     <button
                                         onClick={() => toggleStoreStatus(store.id, store.is_active)}
                                         className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${store.is_active
-                                                ? 'text-yellow-700 bg-yellow-100 hover:bg-yellow-200'
-                                                : 'text-indigo-700 bg-slate-100 hover:bg-green-200'
+                                            ? 'text-yellow-700 bg-yellow-100 hover:bg-yellow-200'
+                                            : 'text-indigo-700 bg-slate-100 hover:bg-green-200'
                                             }`}
                                     >
                                         {store.is_active ? 'Pause' : 'Activate'}
+                                    </button>
+                                    <button
+                                        onClick={() => cloneStore(store.id, store.name)}
+                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                        title="Clone Store"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
                                     </button>
                                     <button
                                         onClick={() => deleteStore(store.id)}

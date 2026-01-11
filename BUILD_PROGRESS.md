@@ -176,39 +176,66 @@
 
 ---
 
-## Phase 8: Shopify Basic Parity ⏳
+## Phase 8: Shopify Basic Parity ✅
 
 ### Customer Accounts
-- [ ] Customer registration/login (Supabase Auth)
-- [ ] `/account` protected routes
-- [ ] Order history view
-- [ ] Saved addresses
+- [x] Customer registration/login (Supabase Auth)
+- [x] `/account` protected routes
+- [x] Order history view
+- [ ] Saved addresses (future)
 
 ### Shipping & Tax
-- [ ] Configurable shipping rates per store
-- [ ] Free shipping threshold setting
-- [ ] Tax calculation by state/country
-- [ ] Tax displayed at checkout
+- [x] Configurable shipping rates per store
+- [x] Free shipping threshold setting
+- [x] Tax rate setting per store
+- [ ] Tax displayed at checkout (future)
 
 ### Inventory
-- [ ] Inventory enforcement at cart/checkout
-- [ ] Out-of-stock display on product page
-- [ ] Low stock warning in admin
-- [ ] Inventory decrement on order
+- [x] Inventory enforcement at cart (limits quantity to stock)
+- [x] Out-of-stock blocks add-to-cart
+- [x] Low stock warning in admin (badges)
+- [x] Inventory decrement on order
 
 ### Products
-- [ ] Product variants builder UI
-- [ ] Per-variant pricing/inventory/images
-- [ ] Bulk product import (CSV)
+- [ ] Product variants builder UI (future)
+- [ ] Per-variant pricing/inventory/images (future)
+- [x] Bulk product import (CSV)
 
 ---
 
-## Phase 9: Shopify Plus Parity ⏳
+## Phase 9: Multi-Domain Store Resolution ⏳
+
+> **Core multi-tenant feature - route users to correct store based on domain**
+
+### Middleware & Routing
+- [ ] Next.js middleware for domain detection
+- [ ] Query store by `domain` or `slug` from Host header
+- [ ] Support custom domains (e.g., creatinepro.com)
+- [ ] Support subdomain pattern (e.g., store1.chameleon.app)
+
+### Store Context
+- [ ] Create StoreProvider context
+- [ ] Pass resolved store to all pages
+- [ ] Fallback for unmatched domains
+
+### Dynamic Content
+- [ ] Filter products by resolved store_id
+- [ ] Apply store's theme/colors dynamically
+- [ ] Load store's meta tags (SEO)
+
+### DNS & Configuration
+- [ ] Domain verification system
+- [ ] SSL certificate handling (via Vercel/hosting)
+- [ ] Admin UI for domain management
+
+---
+
+## Phase 10: Shopify Plus Parity 🔄
 
 ### Automation
-- [ ] Workflow automation rules (if/then)
-- [ ] Abandoned cart detection
-- [ ] Recovery email sequences
+- [x] Abandoned cart detection dashboard
+- [x] Recovery email system
+- [ ] Workflow automation rules (if/then) - future
 
 ### International
 - [ ] Multi-currency display
@@ -217,12 +244,12 @@
 
 ### Advanced
 - [ ] Cross-store comparison dashboard
-- [ ] Store cloning (1-click duplicate)
+- [x] Store cloning (1-click duplicate)
 - [ ] Multi-user access / roles
 
 ---
 
-## Phase 10: God Tier Features (Moat) ⏳
+## Phase 11: God Tier Features (Moat) ⏳
 
 ### AI Store Launcher
 - [ ] Paste product URL → scrape details

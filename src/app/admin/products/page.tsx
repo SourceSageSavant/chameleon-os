@@ -99,15 +99,26 @@ export default function ProductsPage() {
                     <h1 className="text-3xl font-bold text-slate-900">Products</h1>
                     <p className="text-slate-600 mt-1">Manage products across all stores</p>
                 </div>
-                <Link
-                    href="/admin/products/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#2d4a6f] transition-colors"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    New Product
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/admin/products/import"
+                        className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        Import CSV
+                    </Link>
+                    <Link
+                        href="/admin/products/new"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#2d4a6f] transition-colors"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        New Product
+                    </Link>
+                </div>
             </div>
 
             {/* Filters */}
@@ -162,7 +173,7 @@ export default function ProductsPage() {
                                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Product</th>
                                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Store</th>
                                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Price</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Stock</th>
+                                <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Inventory</th>
                                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Status</th>
                                 <th className="text-right px-6 py-4 text-sm font-medium text-slate-500">Actions</th>
                             </tr>
@@ -203,9 +214,19 @@ export default function ProductsPage() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`text-sm ${product.inventory_quantity > 0 ? 'text-[#1e3a5f]' : 'text-red-600'}`}>
-                                            {product.inventory_quantity} in stock
-                                        </span>
+                                        {product.inventory_quantity === 0 ? (
+                                            <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700 font-medium">
+                                                Out of Stock
+                                            </span>
+                                        ) : product.inventory_quantity <= 10 ? (
+                                            <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
+                                                Low: {product.inventory_quantity}
+                                            </span>
+                                        ) : (
+                                            <span className="text-sm text-slate-600">
+                                                {product.inventory_quantity} in stock
+                                            </span>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
@@ -225,8 +246,8 @@ export default function ProductsPage() {
                                             <button
                                                 onClick={() => toggleFeatured(product.id, product.is_featured)}
                                                 className={`p-2 rounded-lg transition-colors ${product.is_featured
-                                                        ? 'text-yellow-600 bg-yellow-50 hover:bg-yellow-100'
-                                                        : 'text-slate-400 hover:bg-slate-100'
+                                                    ? 'text-yellow-600 bg-yellow-50 hover:bg-yellow-100'
+                                                    : 'text-slate-400 hover:bg-slate-100'
                                                     }`}
                                                 title={product.is_featured ? 'Remove from featured' : 'Mark as featured'}
                                             >
@@ -245,8 +266,8 @@ export default function ProductsPage() {
                                             <button
                                                 onClick={() => toggleProductStatus(product.id, product.is_active)}
                                                 className={`p-2 rounded-lg ${product.is_active
-                                                        ? 'text-yellow-600 hover:bg-yellow-50'
-                                                        : 'text-[#1e3a5f] hover:bg-slate-50'
+                                                    ? 'text-yellow-600 hover:bg-yellow-50'
+                                                    : 'text-[#1e3a5f] hover:bg-slate-50'
                                                     }`}
                                             >
                                                 {product.is_active ? (

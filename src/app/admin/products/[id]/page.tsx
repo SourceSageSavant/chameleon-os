@@ -20,7 +20,7 @@ interface Product {
     compare_at_price: number | null;
     images: string[];
     badges: string[];
-    inventory: number;
+    inventory_quantity: number;
     is_active: boolean;
     is_featured: boolean;
 }
@@ -85,7 +85,7 @@ export default function EditProductPage() {
                 compare_at_price: form.compare_at_price || null,
                 images: form.images,
                 badges: form.badges,
-                inventory: form.inventory,
+                inventory_quantity: form.inventory_quantity,
                 is_active: form.is_active,
                 is_featured: form.is_featured,
             })
@@ -301,8 +301,8 @@ export default function EditProductPage() {
                             <label className="block text-sm font-medium text-slate-700 mb-1">Inventory</label>
                             <input
                                 type="number"
-                                value={form.inventory}
-                                onChange={(e) => setForm({ ...form, inventory: parseInt(e.target.value) || 0 })}
+                                value={form.inventory_quantity}
+                                onChange={(e) => setForm({ ...form, inventory_quantity: parseInt(e.target.value) || 0 })}
                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                             />
                         </div>

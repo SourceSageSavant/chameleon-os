@@ -58,6 +58,9 @@ export interface Product {
   metadata?: Record<string, unknown>;
   created_at?: string;
   inStock?: boolean;
+  inventory_quantity?: number;
+  is_active?: boolean;
+  is_featured?: boolean;
 }
 
 export interface ProductVariant {
