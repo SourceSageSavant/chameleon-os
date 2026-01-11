@@ -122,8 +122,31 @@ export async function POST(request: Request) {
         const total = Math.max(0, subtotal - discountAmount + shipping);
         const amountInCents = Math.round(total * 100);
 
+        // Check if store has a connected Stripe account
+        let connectedAccountId: string | null = null;
+        let platformFeePercent = 5; // Default 5% platform fee
+
+        if (storeId) {
+            const { data: store } = await supabase
+                .from('stores')
+                .select('stripe_account_id, payouts_enabled, platform_fee_percent')
+                .eq('id', storeId)
+                .single();
+
+            if (store?.stripe_account_id && store?.payouts_enabled) {
+                connectedAccountId = store.stripe_account_id;
+                platformFeePercent = store.platform_fee_percent || 5;
+            }
+        }
+
+        // Calculate platform fee
+        const platformFee = connectedAccountId
+            ? Math.round(amountInCents * (platformFeePercent / 100))
+            : 0;
+
         // Create PaymentIntent with metadata for webhook to use
-        const paymentIntent = await stripe.paymentIntents.create({
+        // If connected account exists, use transfer_data for payment splitting
+        const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
             amount: amountInCents,
             currency: 'usd',
             automatic_payment_methods: {
@@ -137,8 +160,20 @@ export async function POST(request: Request) {
                 discount_code: discountCode || '',
                 shipping: shipping.toFixed(2),
                 total: total.toFixed(2),
+                platform_fee: (platformFee / 100).toFixed(2),
             },
-        });
+        };
+
+        // Add connected account transfer if store has Stripe Connect
+        if (connectedAccountId) {
+            paymentIntentParams.transfer_data = {
+                destination: connectedAccountId,
+            };
+            paymentIntentParams.application_fee_amount = platformFee;
+        }
+
+        const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+
 
         return NextResponse.json({
             clientSecret: paymentIntent.client_secret,

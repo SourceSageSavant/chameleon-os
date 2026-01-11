@@ -18,7 +18,9 @@ interface LaunchRequest {
         productTitle: string;
         productDescription: string;
         aboutContent: string;
+        faqItems?: Array<{ question: string; answer: string }>;
     };
+
     product: {
         title: string;
         description: string;
@@ -35,7 +37,33 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Brand and product data required' }, { status: 400 });
         }
 
-        // Create the store
+        // Generate JSON page layout for the theme engine
+        const themePrefix = brand.theme || 'organic';
+        const sectionOrder = {
+            organic: ['hero', 'benefits', 'trust', 'testimonials', 'faq'],
+            minimalist: ['hero', 'story', 'features', 'testimonials', 'faq'],
+            cyber: ['hero', 'specs', 'features', 'testimonials', 'cta'],
+        }[themePrefix] || ['hero', 'benefits', 'trust', 'testimonials', 'faq'];
+
+        const pageLayout = {
+            theme: themePrefix,
+            sections: sectionOrder.map((section, index) => ({
+                id: `${themePrefix}-${section}-${index}`,
+                type: `${themePrefix}_${section}`,
+                visible: true,
+                props: {},
+            })),
+            globalProps: {
+                productName: brand.productTitle,
+                tagline: brand.tagline,
+                description: brand.productDescription,
+                heroImage: product.images?.[0] || null,
+                trustBadges: brand.trustBadges || [],
+                faqItems: brand.faqItems || [],
+            },
+        };
+
+        // Create the store with JSON page layout
         const { data: store, error: storeError } = await supabase
             .from('stores')
             .insert({
@@ -55,6 +83,7 @@ export async function POST(request: NextRequest) {
                 free_shipping_threshold: 50,
                 tax_rate: 0,
                 tax_included: false,
+                page_layout: pageLayout, // JSON-driven theme engine layout
             })
             .select()
             .single();
@@ -63,6 +92,7 @@ export async function POST(request: NextRequest) {
             console.error('Store creation error:', storeError);
             return NextResponse.json({ error: 'Failed to create store' }, { status: 500 });
         }
+
 
         // Generate product slug
         const productSlug = product.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').substring(0, 50);
