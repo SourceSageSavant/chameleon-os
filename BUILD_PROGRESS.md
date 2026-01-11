@@ -114,10 +114,14 @@
 - [ ] `city_data` table
 
 ### UI
-- [ ] Login page
-- [ ] Store list view
-- [ ] Add/Edit store form
-- [ ] Product manager
+- [ ] Login page (auth)
+- [x] Dashboard overview
+- [x] Store list view
+- [x] Add/Edit store form
+- [x] Product manager
+- [x] Add/Edit product form
+- [x] Orders management
+- [x] Settings page
 - [ ] AI content generator
 
 ---
