@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 interface ProductInput {
     title: string;
@@ -12,59 +15,24 @@ interface GeneratedBrand {
     storeName: string;
     storeSlug: string;
     tagline: string;
-    theme: 'organic' | 'minimalist' | 'cyber';
+    theme: 'organic' | 'minimalist' | 'cyber' | 'bold' | 'luxury';
     primaryColor: string;
     accentColor: string;
     trustBadges: string[];
     productTitle: string;
     productDescription: string;
     aboutContent: string;
+    faqItems: Array<{ question: string; answer: string }>;
 }
 
-// Theme presets based on category
-const categoryThemes: Record<string, { theme: string; colors: { primary: string; accent: string } }> = {
-    health: { theme: 'organic', colors: { primary: '#2D5A27', accent: '#8BC34A' } },
-    tech: { theme: 'cyber', colors: { primary: '#1a1a2e', accent: '#00d4ff' } },
-    fashion: { theme: 'minimalist', colors: { primary: '#1e1e1e', accent: '#c5a572' } },
-    beauty: { theme: 'organic', colors: { primary: '#d4a5a5', accent: '#f5e6e0' } },
-    home: { theme: 'minimalist', colors: { primary: '#5c4033', accent: '#d9c7b8' } },
-    general: { theme: 'minimalist', colors: { primary: '#1e3a5f', accent: '#60a5fa' } },
+// Theme presets with color palettes
+const themePresets = {
+    organic: { primary: '#2D5A27', accent: '#8BC34A', bg: '#FDFBF7' },
+    minimalist: { primary: '#1e1e1e', accent: '#666666', bg: '#FFFFFF' },
+    cyber: { primary: '#0A0A0A', accent: '#00FF88', bg: '#0A0A0A' },
+    bold: { primary: '#FF4500', accent: '#FFD700', bg: '#1A1A1A' },
+    luxury: { primary: '#1A1A1A', accent: '#C5A572', bg: '#F5F5F5' },
 };
-
-// Generate brand name from product title
-function generateBrandName(title: string, category: string): string {
-    // Extract key product word
-    const words = title.split(' ').filter(w => w.length > 3);
-    const productWord = words[0] || 'Store';
-
-    const prefixes: Record<string, string[]> = {
-        health: ['Pure', 'Prime', 'Vital', 'Apex', 'Core'],
-        tech: ['Nexus', 'Quantum', 'Pulse', 'Volt', 'Sync'],
-        fashion: ['Luxe', 'Elite', 'Vogue', 'Chic', 'Nova'],
-        beauty: ['Glow', 'Radiant', 'Bloom', 'Aura', 'Velvet'],
-        home: ['Haven', 'Casa', 'Nest', 'Cozy', 'Urban'],
-        general: ['Prime', 'Select', 'Choice', 'Best', 'Top'],
-    };
-
-    const categoryPrefixes = prefixes[category] || prefixes.general;
-    const prefix = categoryPrefixes[Math.floor(Math.random() * categoryPrefixes.length)];
-
-    return `${prefix}${productWord.charAt(0).toUpperCase() + productWord.slice(1).toLowerCase()}`;
-}
-
-// Generate trust badges based on category
-function generateTrustBadges(category: string): string[] {
-    const badges: Record<string, string[]> = {
-        health: ['Lab Tested', 'GMP Certified', 'Made in USA', '100% Natural'],
-        tech: ['1 Year Warranty', 'Fast Shipping', '24/7 Support', 'Secure Checkout'],
-        fashion: ['Premium Quality', 'Fast Shipping', 'Easy Returns', 'Authentic'],
-        beauty: ['Cruelty-Free', 'Dermatologist Tested', 'Organic', 'Paraben-Free'],
-        home: ['Premium Quality', 'Free Shipping', 'Easy Assembly', '30-Day Returns'],
-        general: ['Free Shipping', 'Secure Checkout', 'Fast Delivery', 'Easy Returns'],
-    };
-
-    return badges[category] || badges.general;
-}
 
 export async function POST(request: NextRequest) {
     try {
@@ -75,61 +43,106 @@ export async function POST(request: NextRequest) {
         }
 
         const category = product.category || 'general';
-        const themeConfig = categoryThemes[category] || categoryThemes.general;
 
-        // Generate brand identity
-        const storeName = generateBrandName(product.title, category);
-        const storeSlug = storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        // Use Gemini AI for real content generation
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-        // Generate taglines based on category
-        const taglines: Record<string, string[]> = {
-            health: ['Fuel Your Potential', 'Elevate Your Wellness', 'Power Your Performance'],
-            tech: ['Innovation Delivered', 'Future-Ready Tech', 'Cutting Edge Solutions'],
-            fashion: ['Define Your Style', 'Effortless Elegance', 'Curated for You'],
-            beauty: ['Radiate Confidence', 'Your Natural Glow', 'Beauty Redefined'],
-            home: ['Make It Home', 'Living Made Beautiful', 'Your Space, Elevated'],
-            general: ['Quality You Can Trust', 'Excellence Delivered', 'Premium Selection'],
-        };
+        const prompt = `You are an expert e-commerce brand strategist and conversion copywriter. Generate a complete brand identity for a dropshipping store selling this product:
 
-        const categoryTaglines = taglines[category] || taglines.general;
-        const tagline = categoryTaglines[Math.floor(Math.random() * categoryTaglines.length)];
+PRODUCT INFO:
+- Title: ${product.title}
+- Description: ${product.description || 'No description provided'}
+- Price: $${product.price || 29.99}
+- Category: ${category}
 
-        // Enhance product description
-        const enhancedDescription = `${product.description}\n\nExperience the difference with ${storeName}. We're committed to bringing you only the highest quality products with fast, reliable shipping and exceptional customer service.`;
+Generate the following in JSON format (respond ONLY with valid JSON, no markdown):
+{
+  "storeName": "A unique, memorable 1-2 word brand name (not generic, should feel premium)",
+  "tagline": "A compelling 3-6 word tagline that creates desire",
+  "theme": "One of: organic, minimalist, cyber, bold, luxury (pick based on product category)",
+  "productTitle": "An optimized, benefit-focused product title (max 60 chars)",
+  "productDescription": "A 3-paragraph product description with benefits, features, and a call-to-action. Use bullet points for features. Make it convert.",
+  "aboutContent": "A 2-paragraph about page that builds trust and tells the brand story",
+  "trustBadges": ["4 relevant trust badges for this product category"],
+  "faqItems": [
+    {"question": "Common question 1", "answer": "Helpful answer"},
+    {"question": "Common question 2", "answer": "Helpful answer"},
+    {"question": "Common question 3", "answer": "Helpful answer"}
+  ]
+}
 
-        // Generate about content
-        const aboutContent = `Welcome to ${storeName}! We're passionate about bringing you the best ${category === 'general' ? 'products' : category + ' products'} on the market.
+IMPORTANT:
+- Make the content UNIQUE and specific to this product
+- Use persuasive, conversion-focused language
+- The store name should be catchy and domain-name friendly
+- Trust badges should be realistic and category-appropriate`;
 
-Our mission is simple: deliver premium quality at fair prices, with customer satisfaction as our top priority.
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-Every product in our store is carefully selected to meet our high standards. We believe in transparency, quality, and putting our customers first.
+        // Parse the JSON response
+        let aiGenerated;
+        try {
+            // Clean up the response - remove any markdown code blocks
+            const cleanedText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            aiGenerated = JSON.parse(cleanedText);
+        } catch (parseError) {
+            console.error('Failed to parse AI response:', text);
+            // Fallback to basic generation if AI parsing fails
+            return NextResponse.json({
+                success: false,
+                error: 'AI response parsing failed',
+                fallback: true,
+            }, { status: 500 });
+        }
 
-Thank you for choosing ${storeName}. We're here to serve you!`;
+        // Get theme colors
+        const themeName = aiGenerated.theme as keyof typeof themePresets;
+        const themeColors = themePresets[themeName] || themePresets.minimalist;
+
+        // Build the final brand object
+        const storeSlug = aiGenerated.storeName
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
 
         const generatedBrand: GeneratedBrand = {
-            storeName,
+            storeName: aiGenerated.storeName,
             storeSlug,
-            tagline,
-            theme: themeConfig.theme as 'organic' | 'minimalist' | 'cyber',
-            primaryColor: themeConfig.colors.primary,
-            accentColor: themeConfig.colors.accent,
-            trustBadges: generateTrustBadges(category),
-            productTitle: product.title,
-            productDescription: enhancedDescription,
-            aboutContent,
+            tagline: aiGenerated.tagline,
+            theme: themeName,
+            primaryColor: themeColors.primary,
+            accentColor: themeColors.accent,
+            trustBadges: aiGenerated.trustBadges || ['Free Shipping', 'Secure Checkout', '30-Day Returns', '24/7 Support'],
+            productTitle: aiGenerated.productTitle,
+            productDescription: aiGenerated.productDescription,
+            aboutContent: aiGenerated.aboutContent,
+            faqItems: aiGenerated.faqItems || [],
         };
 
         return NextResponse.json({
             success: true,
             brand: generatedBrand,
             category,
+            aiGenerated: true,
         });
 
     } catch (error) {
         console.error('Brand generation error:', error);
+
+        // Check if it's an API key error
+        if (String(error).includes('API_KEY')) {
+            return NextResponse.json(
+                { error: 'Gemini API key not configured. Set GEMINI_API_KEY in .env.local' },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(
             { error: 'Failed to generate brand' },
             { status: 500 }
         );
     }
 }
+

@@ -44,16 +44,32 @@ export default function CheckoutPage() {
             return;
         }
 
-        // Create PaymentIntent as soon as the page loads
+        // Create PaymentIntent - send cart items, server calculates price (SECURE)
+        const cartItems = items.map(item => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+            variant_id: item.variant_id,
+        }));
+
         fetch('/api/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items, amount }),
+            body: JSON.stringify({
+                items: cartItems,
+                discount_code: discount?.code,
+            }),
         })
             .then((res) => res.json())
-            .then((data) => setClientSecret(data.clientSecret))
+            .then((data) => {
+                if (data.error) {
+                    console.error('Payment intent error:', data.error);
+                    return;
+                }
+                setClientSecret(data.clientSecret);
+            })
             .catch((err) => console.error('Error creating payment intent:', err));
-    }, [items, amount, router]);
+    }, [items, discount, router]);
+
 
     async function handleApplyDiscount() {
         if (!discountCode.trim()) return;

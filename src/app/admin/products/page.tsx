@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createBrowserClient } from '@/lib/supabase';
+import AIProductWizard from '@/components/admin/ai-product-wizard';
 
 interface Product {
     id: string;
@@ -28,6 +29,7 @@ export default function ProductsPage() {
     const [stores, setStores] = useState<Store[]>([]);
     const [selectedStore, setSelectedStore] = useState<string>('all');
     const [loading, setLoading] = useState(true);
+    const [showAIWizard, setShowAIWizard] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -93,6 +95,16 @@ export default function ProductsPage() {
 
     return (
         <div className="p-8">
+            {showAIWizard && (
+                <AIProductWizard
+                    storeId={selectedStore === 'all' ? (stores[0]?.id || '') : selectedStore}
+                    onSuccess={() => {
+                        fetchData();
+                        setShowAIWizard(false);
+                    }}
+                    onClose={() => setShowAIWizard(false)}
+                />
+            )}
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -109,6 +121,15 @@ export default function ProductsPage() {
                         </svg>
                         Import CSV
                     </Link>
+                    <button
+                        onClick={() => setShowAIWizard(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Generate with AI
+                    </button>
                     <Link
                         href="/admin/products/new"
                         className="flex items-center gap-2 px-4 py-2 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#2d4a6f] transition-colors"
