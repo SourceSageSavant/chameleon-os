@@ -151,6 +151,7 @@ export default function OrdersPage() {
                                         <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Payment</th>
                                         <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Fulfillment</th>
                                         <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Date</th>
+                                        <th className="text-left px-6 py-4 text-sm font-medium text-slate-500">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -184,6 +185,15 @@ export default function OrdersPage() {
                                             </td>
                                             <td className="px-6 py-4 text-sm text-slate-500">
                                                 {formatDate(order.created_at)}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <a
+                                                    href={`/admin/orders/${order.id}`}
+                                                    className="text-[#1e3a5f] hover:underline text-sm font-medium"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    View Details
+                                                </a>
                                             </td>
                                         </tr>
                                     ))}

@@ -1,8 +1,8 @@
 # Chameleon Commerce OS — Build Progress
 
 > **First Product:** Creatine Gummies (Organic Template)  
-> **Status:** 65% Complete  
-> **Last Updated:** January 10, 2026
+> **Status:** 85% Complete  
+> **Last Updated:** January 11, 2026
 
 ---
 
@@ -13,10 +13,21 @@
 | Setup | 100% | ✅ Done |
 | Foundation | 100% | ✅ Done |
 | Storefront | 100% | ✅ Done |
-| Templates | 35% | 🔄 Active (Organic Complete) |
-| AI Engine | 0% | ⏳ Pending |
-| Dashboard | 0% | ⏳ Pending |
-| Launch | 0% | ⏳ Pending |
+| Templates | 100% | ✅ Done |
+| AI Engine | 0% | ⏳ Pending (moved to Phase 10) |
+| Dashboard | 90% | ✅ Done |
+| Launch | 50% | 🔄 Active |
+| Critical Commerce | 0% | ⏳ **NEXT** |
+| Shopify Basic | 0% | ⏳ Pending |
+| Shopify Plus | 0% | ⏳ Pending |
+| God Tier | 0% | ⏳ Pending |
+
+---
+
+## ✅ Already Completed (Enhancements)
+- [x] Admin Authentication (Supabase Auth)
+- [x] Analytics Dashboard (revenue, conversions, traffic)
+- [x] Theme Export/Import (JSON config)
 
 ---
 
@@ -28,11 +39,11 @@
 - [x] Supabase client setup
 - [x] Cart store (Zustand)
 - [x] TypeScript types
-- [ ] **→ Supabase database tables (need to create)**
+- [x] Supabase database tables
 
 ---
 
-## Phase 2: Storefront 🔄
+## Phase 2: Storefront ✅
 
 ### Layout
 - [x] Header (logo, nav, cart icon)
@@ -67,7 +78,7 @@
 
 ---
 
-## Phase 3: Templates 🔄
+## Phase 3: Templates ✅
 
 ### Organic Template (Creatine Gummies)
 - [x] Hero section
@@ -78,18 +89,22 @@
 - [x] Product grid component
 
 ### Minimalist Template (High-Ticket)
-- [ ] Hero
-- [ ] Story section
-- [ ] Product grid
+- [x] Hero
+- [x] Story section
+- [x] Features section
+- [x] Testimonials
+- [x] FAQ
 
 ### Cyber Template (Gaming/Tech)
-- [ ] Hero
-- [ ] Tech specs
-- [ ] Product grid
+- [x] Hero
+- [x] Tech specs
+- [x] Features
+- [x] Testimonials
+- [x] CTA section
 
 ### Template System
-- [ ] PageBuilder (maps theme → components)
-- [ ] Theme switcher test
+- [x] PageBuilder (maps theme → components)
+- [x] Dynamic theme rendering from database
 
 ---
 
@@ -104,7 +119,7 @@
 
 ---
 
-## Phase 5: Admin Dashboard ⏳
+## Phase 5: Admin Dashboard ✅
 
 ### Database (Supabase)
 - [x] `stores` table
@@ -114,26 +129,125 @@
 - [ ] `city_data` table
 
 ### UI
-- [ ] Login page (auth)
+- [x] Login page (auth)
 - [x] Dashboard overview
 - [x] Store list view
-- [x] Add/Edit store form
+- [x] Add/Edit store form (full CRUD)
 - [x] Product manager
-- [x] Add/Edit product form
+- [x] Add/Edit product form (full CRUD)
 - [x] Orders management
 - [x] Settings page
+- [x] Theme settings page (export/import)
+- [x] Analytics dashboard
 - [ ] AI content generator
 
 ---
 
-## Phase 6: Launch ⏳
+## Phase 6: Launch 🔄
 
-- [ ] Deploy to Vercel
+- [x] Deploy to Vercel
 - [ ] Buy domain
 - [ ] Configure DNS
-- [ ] Set environment variables
+- [x] Set environment variables
 - [ ] Stripe live mode
 - [ ] First real order 🎉
+
+---
+
+## Phase 7: Critical Commerce Fixes ✅
+
+> **Must complete before taking real orders**
+
+### Checkout Flow
+- [x] Checkout Success Page (`/checkout/success`)
+- [x] Order creation after payment (write to `orders` table)
+- [x] Clear cart after successful order
+
+### Order System
+- [x] Order confirmation emails (Resend/SendGrid)
+- [x] Order detail view with tracking number input
+- [x] Shipping notification emails
+
+### Discounts
+- [x] `discounts` table schema (SQL provided)
+- [x] Admin UI to create/manage discount codes
+- [x] Checkout discount code field
+- [x] Apply percentage/fixed/free-shipping discounts
+
+---
+
+## Phase 8: Shopify Basic Parity ⏳
+
+### Customer Accounts
+- [ ] Customer registration/login (Supabase Auth)
+- [ ] `/account` protected routes
+- [ ] Order history view
+- [ ] Saved addresses
+
+### Shipping & Tax
+- [ ] Configurable shipping rates per store
+- [ ] Free shipping threshold setting
+- [ ] Tax calculation by state/country
+- [ ] Tax displayed at checkout
+
+### Inventory
+- [ ] Inventory enforcement at cart/checkout
+- [ ] Out-of-stock display on product page
+- [ ] Low stock warning in admin
+- [ ] Inventory decrement on order
+
+### Products
+- [ ] Product variants builder UI
+- [ ] Per-variant pricing/inventory/images
+- [ ] Bulk product import (CSV)
+
+---
+
+## Phase 9: Shopify Plus Parity ⏳
+
+### Automation
+- [ ] Workflow automation rules (if/then)
+- [ ] Abandoned cart detection
+- [ ] Recovery email sequences
+
+### International
+- [ ] Multi-currency display
+- [ ] Exchange rate API integration
+- [ ] Locale-based pricing
+
+### Advanced
+- [ ] Cross-store comparison dashboard
+- [ ] Store cloning (1-click duplicate)
+- [ ] Multi-user access / roles
+
+---
+
+## Phase 10: God Tier Features (Moat) ⏳
+
+### AI Store Launcher
+- [ ] Paste product URL → scrape details
+- [ ] AI-generate brand name, colors, content
+- [ ] Auto-create store with all sections filled
+
+### Programmatic SEO
+- [ ] `scripts/writer-bot.ts` (Gemini API)
+- [ ] City database (500+ cities)
+- [ ] Dynamic routes `/[city]/[product]`
+- [ ] Auto-generated unique content per page
+- [ ] Sitemap generator
+- [ ] Internal linking system
+
+### Profitability Tracking
+- [ ] Ad spend logging (manual + API)
+- [ ] ROAS calculation per store
+- [ ] Winner/loser auto-detection
+- [ ] Profit/loss dashboard
+
+### SaaS Features
+- [ ] Store Content Editor (customize all section text)
+- [ ] Themed Header/Footer (match theme style)
+- [ ] Customer List & CRM
+- [ ] Email template builder
 
 ---
 
@@ -141,7 +255,7 @@
 
 | Route | Page | Status |
 |-------|------|--------|
-| `/` | Homepage | ✅ |
+| `/` | Homepage (dynamic theme) | ✅ |
 | `/products` | Product Listing (smart redirect) | ✅ |
 | `/products/[slug]` | Product Detail | ✅ |
 | `/about` | About Us | ✅ |
@@ -152,7 +266,18 @@
 | `/terms` | Terms of Service | ✅ |
 | `/lab-results` | Lab Results & Certifications | ✅ |
 | `/checkout` | Checkout | ✅ |
-| `/admin/*` | Admin Dashboard | ⏳ |
+| `/admin` | Admin Dashboard | ✅ |
+| `/admin/stores` | Store Management | ✅ |
+| `/admin/stores/[id]` | Edit Store | ✅ |
+| `/admin/stores/new` | New Store | ✅ |
+| `/admin/products` | Product Management | ✅ |
+| `/admin/products/[id]` | Edit Product | ✅ |
+| `/admin/products/new` | New Product | ✅ |
+| `/admin/orders` | Orders Management | ✅ |
+| `/admin/analytics` | Analytics Dashboard | ✅ |
+| `/admin/themes` | Theme Export/Import | ✅ |
+| `/admin/settings` | Settings | ✅ |
+| `/admin/login` | Admin Login | ✅ |
 
 ---
 
@@ -177,32 +302,66 @@ npx ts-node scripts/writer-bot.ts
 src/
 ├── app/
 │   ├── layout.tsx
-│   ├── page.tsx
+│   ├── page.tsx                    # Dynamic theme rendering
 │   ├── globals.css
-│   ├── about/page.tsx          # ✅ NEW
-│   ├── contact/page.tsx        # ✅ NEW
-│   ├── shipping/page.tsx       # ✅ NEW
-│   ├── returns/page.tsx        # ✅ NEW
-│   ├── privacy/page.tsx        # ✅ NEW
-│   ├── terms/page.tsx          # ✅ NEW
-│   ├── lab-results/page.tsx    # ✅ NEW
-│   ├── refunds/page.tsx        # → Redirects to /returns
-│   └── products/
-│       ├── page.tsx            # Smart redirect logic
-│       └── [slug]/page.tsx
+│   ├── about/page.tsx
+│   ├── contact/page.tsx
+│   ├── shipping/page.tsx
+│   ├── returns/page.tsx
+│   ├── privacy/page.tsx
+│   ├── terms/page.tsx
+│   ├── lab-results/page.tsx
+│   ├── products/
+│   │   ├── page.tsx
+│   │   └── [slug]/page.tsx
+│   └── admin/
+│       ├── layout.tsx              # Auth protected
+│       ├── page.tsx                # Dashboard
+│       ├── login/page.tsx          # ✅ NEW
+│       ├── stores/
+│       │   ├── page.tsx
+│       │   ├── new/page.tsx
+│       │   └── [id]/page.tsx       # ✅ NEW
+│       ├── products/
+│       │   ├── page.tsx
+│       │   ├── new/page.tsx
+│       │   └── [id]/page.tsx       # ✅ NEW
+│       ├── orders/page.tsx
+│       ├── analytics/page.tsx      # ✅ NEW
+│       ├── themes/page.tsx         # ✅ NEW
+│       └── settings/page.tsx
 ├── components/
-│   ├── templates/organic/
-│   │   ├── Hero.tsx
-│   │   ├── Benefits.tsx
-│   │   ├── Trust.tsx
-│   │   └── FAQ.tsx
+│   ├── PageBuilder.tsx             # ✅ NEW
+│   ├── templates/
+│   │   ├── organic/
+│   │   │   ├── Hero.tsx
+│   │   │   ├── Benefits.tsx
+│   │   │   ├── Trust.tsx
+│   │   │   ├── Testimonials.tsx
+│   │   │   ├── FAQ.tsx
+│   │   │   └── index.ts
+│   │   ├── minimalist/             # ✅ NEW
+│   │   │   ├── Hero.tsx
+│   │   │   ├── Story.tsx
+│   │   │   ├── Features.tsx
+│   │   │   ├── Testimonials.tsx
+│   │   │   ├── FAQ.tsx
+│   │   │   └── index.ts
+│   │   └── cyber/                  # ✅ NEW
+│   │       ├── Hero.tsx
+│   │       ├── Specs.tsx
+│   │       ├── Features.tsx
+│   │       ├── Testimonials.tsx
+│   │       ├── CTA.tsx
+│   │       └── index.ts
 │   └── ui/
 │       ├── Header.tsx
 │       ├── Footer.tsx
 │       ├── CartDrawer.tsx
-│       └── PageLayout.tsx      # ✅ NEW (shared layout)
+│       └── PageLayout.tsx
 ├── lib/
 │   ├── supabase.ts
+│   ├── auth.tsx                    # ✅ NEW
 │   ├── theme-provider.tsx
 │   └── mock-products.ts
 ├── middleware.ts
