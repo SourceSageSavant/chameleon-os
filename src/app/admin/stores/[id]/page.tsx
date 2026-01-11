@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { createBrowserClient } from '@/lib/supabase';
+import StoreDomainSettings from '@/components/admin/store-domain-settings';
 
 const themes = [
     { id: 'organic', name: 'Organic', description: 'Soft pastels, rounded corners - for wellness/health' },
@@ -25,6 +26,10 @@ interface Store {
     meta_title: string;
     meta_description: string;
     is_active: boolean;
+    shipping_rate: number;
+    free_shipping_threshold: number;
+    tax_rate: number;
+    tax_included: boolean;
 }
 
 export default function EditStorePage() {
@@ -80,6 +85,10 @@ export default function EditStorePage() {
             meta_title: form.meta_title,
             meta_description: form.meta_description,
             is_active: form.is_active,
+            shipping_rate: form.shipping_rate,
+            free_shipping_threshold: form.free_shipping_threshold,
+            tax_rate: form.tax_rate,
+            tax_included: form.tax_included,
         };
 
         console.log('Attempting to update store:', storeId, updateData);
@@ -151,12 +160,20 @@ export default function EditStorePage() {
                         <h1 className="text-2xl font-semibold text-slate-900">Edit Store</h1>
                         <p className="text-slate-500 mt-1">{form.name}</p>
                     </div>
-                    <button
-                        onClick={handleDelete}
-                        className="px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-                    >
-                        Delete Store
-                    </button>
+                    <div className="flex gap-2">
+                        <Link
+                            href={`/admin/stores/${storeId}/content`}
+                            className="px-4 py-2 text-[#1e3a5f] border border-[#1e3a5f] rounded-lg hover:bg-blue-50 transition-colors"
+                        >
+                            ✏️ Edit Content
+                        </Link>
+                        <button
+                            onClick={handleDelete}
+                            className="px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                        >
+                            Delete Store
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -166,6 +183,9 @@ export default function EditStorePage() {
                         {error}
                     </div>
                 )}
+
+                {/* Domain Settings */}
+                <StoreDomainSettings storeId={storeId} />
 
                 {/* Status Toggle */}
                 <div className="bg-white rounded-xl p-6 border border-slate-200">
@@ -337,8 +357,8 @@ export default function EditStorePage() {
                             <input
                                 type="number"
                                 step="0.01"
-                                value={(form as any).shipping_rate || '5.99'}
-                                onChange={(e) => setForm({ ...form, shipping_rate: parseFloat(e.target.value) } as any)}
+                                value={form.shipping_rate || ''}
+                                onChange={(e) => setForm({ ...form, shipping_rate: parseFloat(e.target.value) })}
                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                             />
                         </div>
@@ -347,8 +367,8 @@ export default function EditStorePage() {
                             <input
                                 type="number"
                                 step="0.01"
-                                value={(form as any).free_shipping_threshold || '50'}
-                                onChange={(e) => setForm({ ...form, free_shipping_threshold: parseFloat(e.target.value) } as any)}
+                                value={form.free_shipping_threshold || ''}
+                                onChange={(e) => setForm({ ...form, free_shipping_threshold: parseFloat(e.target.value) })}
                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                             />
                             <p className="text-xs text-slate-500 mt-1">Orders above this amount get free shipping</p>
@@ -358,8 +378,8 @@ export default function EditStorePage() {
                             <input
                                 type="number"
                                 step="0.01"
-                                value={(form as any).tax_rate || '0'}
-                                onChange={(e) => setForm({ ...form, tax_rate: parseFloat(e.target.value) } as any)}
+                                value={form.tax_rate || ''}
+                                onChange={(e) => setForm({ ...form, tax_rate: parseFloat(e.target.value) })}
                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                             />
                             <p className="text-xs text-slate-500 mt-1">Applied to all orders (e.g., 8.25 for 8.25%)</p>
@@ -368,8 +388,8 @@ export default function EditStorePage() {
                             <input
                                 type="checkbox"
                                 id="tax_included"
-                                checked={(form as any).tax_included || false}
-                                onChange={(e) => setForm({ ...form, tax_included: e.target.checked } as any)}
+                                checked={form.tax_included || false}
+                                onChange={(e) => setForm({ ...form, tax_included: e.target.checked })}
                                 className="w-5 h-5 rounded text-[#1e3a5f] focus:ring-[#1e3a5f]"
                             />
                             <label htmlFor="tax_included" className="text-sm text-slate-700">

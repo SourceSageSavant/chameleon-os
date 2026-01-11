@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "@/lib/theme-provider";
+import { headers } from "next/headers";
+import { createServerClient } from "@/lib/supabase";
+import { StoreProvider } from "@/providers/store-provider";
 import "./globals.css";
 
 // Font configurations for different themes
@@ -22,35 +24,66 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Premium Creatine Gummies | NSF Certified for Sport",
-    template: "%s | Chameleon Commerce",
-  },
-  description: "The only creatine gummy with 2.5g per serving. NSF Certified for Sport, made in USA. Get your full daily dose in just 2 delicious gummies.",
-  keywords: ["creatine gummies", "creatine supplement", "NSF certified", "sports nutrition", "workout supplement"],
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "Chameleon Commerce",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const storeId = headersList.get("x-store-id");
 
-export default function RootLayout({
+  if (storeId) {
+    const supabase = createServerClient();
+    const { data: store } = await supabase
+      .from("stores")
+      .select("name, content, settings")
+      .eq("id", storeId)
+      .single();
+
+    if (store) {
+      return {
+        title: {
+          default: store.content?.seo_title || store.name,
+          template: `%s | ${store.name}`,
+        },
+        description: store.content?.seo_description || `Welcome to ${store.name}`,
+        keywords: store.settings?.seo?.keywords || [],
+      };
+    }
+  }
+
+  return {
+    title: "Chameleon Commerce",
+    description: "Premium E-commerce Platform",
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get store ID from middleware headers
+  const headersList = await headers();
+  const storeId = headersList.get("x-store-id");
+
+  let initialStore = null;
+
+  if (storeId) {
+    const supabase = createServerClient();
+    const { data } = await supabase
+      .from("stores")
+      .select("*")
+      .eq("id", storeId)
+      .single();
+    initialStore = data;
+  }
+
   return (
-    <html lang="en" data-theme="organic_v1">
+    <html lang="en">
       <body
         className={`${inter.variable} ${playfair.variable} ${jetbrains.variable} antialiased`}
       >
-        <ThemeProvider>
+        <StoreProvider initialStore={initialStore}>
           {children}
-        </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );
 }
-

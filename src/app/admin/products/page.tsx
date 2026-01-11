@@ -196,7 +196,14 @@ export default function ProductsPage() {
                                             </div>
                                             <div>
                                                 <p className="font-medium text-slate-900">{product.title}</p>
-                                                <p className="text-sm text-slate-500">/{product.slug}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm text-slate-500">/{product.slug}</span>
+                                                    {selectedStore === 'all' && (
+                                                        <span className="text-xs px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded">
+                                                            {getStoreName(product.store_id)}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>

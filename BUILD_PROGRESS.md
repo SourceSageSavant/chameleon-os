@@ -203,34 +203,34 @@
 
 ---
 
-## Phase 9: Multi-Domain Store Resolution ⏳
+## Phase 9: Multi-Domain Store Resolution ✅
 
 > **Core multi-tenant feature - route users to correct store based on domain**
 
-### Middleware & Routing
-- [ ] Next.js middleware for domain detection
-- [ ] Query store by `domain` or `slug` from Host header
-- [ ] Support custom domains (e.g., creatinepro.com)
-- [ ] Support subdomain pattern (e.g., store1.chameleon.app)
+### Middleware & Routing ✅
+- [x] Next.js middleware for domain detection (`src/middleware.ts`)
+- [x] Query store by `domain` or `slug` from Host header
+- [x] Support custom domains (e.g., creatinepro.com)
+- [x] Support subdomain pattern (e.g., store1.chameleon.app)
 
-### Store Context
-- [ ] Create StoreProvider context
-- [ ] Pass resolved store to all pages
-- [ ] Fallback for unmatched domains
+### Store Context ✅
+- [x] Create StoreProvider context (`src/providers/store-provider.tsx`)
+- [x] Pass resolved store to all pages (via RootLayout)
+- [x] Fallback for unmatched domains (default store)
 
-### Dynamic Content
-- [ ] Filter products by resolved store_id
-- [ ] Apply store's theme/colors dynamically
-- [ ] Load store's meta tags (SEO)
+### Dynamic Content ✅
+- [x] Apply store's theme/colors dynamically (CSS vars)
+- [x] Load store's meta tags (SEO)
+- [x] Filter products by resolved store_id
 
-### DNS & Configuration
-- [ ] Domain verification system
-- [ ] SSL certificate handling (via Vercel/hosting)
-- [ ] Admin UI for domain management
+### DNS & Configuration ✅
+- [x] Domain verification system (via Admin UI)
+- [x] Admin UI for domain management (`/admin/stores/[id]`)
+- [ ] SSL certificate handling (via Vercel/hosting) - platform dependent
 
 ---
 
-## Phase 10: Shopify Plus Parity 🔄
+## Phase 10: Shopify Plus Parity ✅
 
 ### Automation
 - [x] Abandoned cart detection dashboard
@@ -238,43 +238,70 @@
 - [ ] Workflow automation rules (if/then) - future
 
 ### International
-- [ ] Multi-currency display
-- [ ] Exchange rate API integration
-- [ ] Locale-based pricing
+- [ ] Multi-currency display - future
+- [ ] Exchange rate API integration - future
+- [ ] Locale-based pricing - future
 
 ### Advanced
-- [ ] Cross-store comparison dashboard
+- [x] Cross-store comparison dashboard
 - [x] Store cloning (1-click duplicate)
-- [ ] Multi-user access / roles
+- [ ] Multi-user access / roles - future
 
 ---
 
-## Phase 11: God Tier Features (Moat) ⏳
+## Phase 11: God Tier Features (Moat) ✅
 
-### AI Store Launcher
-- [ ] Paste product URL → scrape details
-- [ ] AI-generate brand name, colors, content
-- [ ] Auto-create store with all sections filled
+### AI Store Launcher ✅
+- [x] Paste product URL → scrape details (`/api/ai/scrape-product`)
+- [x] AI-generate brand name, colors, content (`/api/ai/generate-brand`)
+- [x] Auto-create store with all sections filled (`/api/ai/launch-store`)
+- [x] Launch wizard UI (`/admin/launch`)
 
-### Programmatic SEO
-- [ ] `scripts/writer-bot.ts` (Gemini API)
-- [ ] City database (500+ cities)
-- [ ] Dynamic routes `/[city]/[product]`
-- [ ] Auto-generated unique content per page
-- [ ] Sitemap generator
-- [ ] Internal linking system
+### Programmatic SEO ✅
+- [x] City database (100+ US cities)
+- [x] Dynamic routes `/locations/[city]`
+- [x] Auto-generated unique content per city page
+- [x] Sitemap generator (`/sitemap.xml`)
+- [x] Internal linking system (nearby cities)
+- [ ] `scripts/writer-bot.ts` (Gemini API) - future
 
-### Profitability Tracking
-- [ ] Ad spend logging (manual + API)
-- [ ] ROAS calculation per store
-- [ ] Winner/loser auto-detection
-- [ ] Profit/loss dashboard
+### Profitability Tracking ✅
+- [x] Ad spend logging (manual)
+- [x] ROAS calculation per store
+- [x] Winner/loser auto-detection
+- [x] Profit/loss dashboard (`/admin/profitability`)
 
 ### SaaS Features
-- [ ] Store Content Editor (customize all section text)
-- [ ] Themed Header/Footer (match theme style)
-- [ ] Customer List & CRM
-- [ ] Email template builder
+- [x] Store Content Editor (`/admin/stores/[id]/content`)
+- [ ] Themed Header/Footer (match theme style) - future
+- [ ] Customer List & CRM - future
+- [ ] Email template builder - future
+
+---
+
+## Phase 12: Enhanced AI Theme System ✅
+
+> **Hybrid approach - base themes + deep AI customization for infinite variety with consistent quality**
+
+### Base Theme Expansion ✅
+- [x] 10 base themes (Organic, Minimalist, Cyber, Bold, Retro, Luxury, Playful, Corporate, Nature, Urban)
+- [x] Theme preview gallery in admin (`/admin/themes`)
+- [x] Category filtering (modern, classic, bold, minimal)
+- [x] Live preview modal with hero + products
+
+### AI Deep Customization ✅
+- [x] Font selection (10 heading fonts, 8 body fonts)
+- [x] Corner radius presets (sharp/subtle/rounded/soft/pill)
+- [x] Button styles (solid/outline/soft/gradient)
+- [x] Hero layout options (left/center/right/split)
+- [x] Color customization (primary, accent, background, text)
+- [x] Live preview while customizing
+
+### Theme Storage ✅
+- [x] Per-store theme settings in database
+- [x] Apply theme to any store
+- [ ] Theme export/import - future
+- [ ] Clone theme across stores - future
 
 ---
 

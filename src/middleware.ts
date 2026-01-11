@@ -1,119 +1,111 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getMiddlewareClient } from '@/lib/supabase';
-import type { StoreConfig, ThemePreset } from '@/types';
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-// Default store config for development/fallback
-const DEFAULT_STORE: Partial<StoreConfig> = {
-    id: 'default',
-    theme_preset: 'organic_v1' as ThemePreset,
-    config: {
-        colors: {
-            primary: '#2D5A27',
-            secondary: '#F5F5DC',
-            accent: '#8B4513',
-            background: '#FDFBF7',
-            text: '#2C3E50',
-        },
-        assets: {
-            logo_url: '/logo.png',
-        },
-        content: {
-            store_name: 'Chameleon Store',
-            tagline: 'Your Wellness Journey Starts Here',
-            description: 'Premium supplements for peak performance',
-        },
-        features: {
-            show_reviews: true,
-            countdown_timer: false,
-            show_trust_badges: true,
-            subscription_toggle: true,
-        },
-        seo: {
-            title_template: '%s | Chameleon Store',
-            meta_description: 'Premium supplements for peak performance',
-            keywords: ['supplements', 'wellness', 'health'],
-        },
-    },
-    status: 'active',
-};
+// Create a Supabase client for middleware
+// using direct createClient to ensure edge compatibility and fresh instance per request if needed
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-// Domain to store mapping for local development
-const LOCAL_DOMAIN_MAP: Record<string, string> = {
-    'localhost:3000': 'default',
-    'creatine.localhost:3000': 'creatine-gummies',
-    'gaming.localhost:3000': 'gaming-store',
-    // Add more local test domains here
-};
+// List of paths that should bypass store resolution
+// We want to skip static files, API routes (except maybe some that need store context?), and admin
+const BYPASS_PATHS = [
+    '/admin',
+    '/_next',
+    '/favicon.ico',
+    '/robots.txt',
+    '/sitemap.xml',
+    '/placeholder',
+];
 
 export async function middleware(request: NextRequest) {
-    const hostname = request.headers.get('host') || 'localhost:3000';
-    const pathname = request.nextUrl.pathname;
+    const { pathname } = request.nextUrl;
 
-    // Skip middleware for static files and API routes
-    if (
-        pathname.startsWith('/_next') ||
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/static') ||
-        pathname.includes('.') // Static files like favicon.ico
-    ) {
+    // Skip middleware for admin routes, and static files
+    if (BYPASS_PATHS.some(path => pathname.startsWith(path)) || pathname.includes('.')) {
         return NextResponse.next();
     }
 
-    let store: Partial<StoreConfig> | null = null;
+    // Parse the host to determine store
+    const host = request.headers.get('host') || '';
 
-    // Try to get store from Supabase
-    const supabase = getMiddlewareClient();
+    // Default development hosts - check if it's localhost or a preview URL
+    const isDev = host.includes('localhost') || host.includes('127.0.0.1') || host.endsWith('.vercel.app');
 
-    if (supabase) {
-        try {
-            // First, check if this is a known domain
-            const { data } = await supabase
-                .from('stores')
-                .select('*')
-                .eq('domain', hostname)
-                .eq('status', 'active')
-                .single();
-
-            if (data) {
-                store = data as StoreConfig;
-            }
-        } catch (error) {
-            console.log('Supabase lookup failed, using default store:', error);
-        }
-    }
-
-    // Fallback: Check local domain map for development
-    if (!store) {
-        const localStoreId = LOCAL_DOMAIN_MAP[hostname];
-        if (localStoreId && localStoreId !== 'default') {
-            // In production, this would fetch from Supabase
-            console.log(`Local development: Using store ID ${localStoreId}`);
-        }
-        store = DEFAULT_STORE;
-    }
-
-    // Create response with store data in headers
     const response = NextResponse.next();
 
-    // Inject store data into request headers for downstream components
-    response.headers.set('x-store-id', store.id || 'default');
-    response.headers.set('x-store-theme', store.theme_preset || 'organic_v1');
-    response.headers.set('x-store-config', JSON.stringify(store.config || {}));
+    try {
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+        let storeId: string | null = null;
+        let storeDomain: string | null = null;
+
+        // 1. Try to find store by custom domain (priority)
+        if (!storeId) {
+            const { data: domainStore } = await supabase
+                .from('stores')
+                .select('id, domain')
+                .eq('domain', host)
+                .eq('is_active', true)
+                .single();
+
+            if (domainStore) {
+                storeId = domainStore.id;
+                storeDomain = domainStore.domain;
+            }
+        }
+
+        // 2. Try to find by subdomain (e.g. store-slug.host.com)
+        if (!storeId) {
+            const subdomain = host.split('.')[0];
+            // Avoid matching 'www' as a store slug if possible, or handle it
+            if (subdomain !== 'www') {
+                const { data: subdomainStore } = await supabase
+                    .from('stores')
+                    .select('id, slug')
+                    .eq('slug', subdomain)
+                    .eq('is_active', true)
+                    .single();
+
+                if (subdomainStore) {
+                    storeId = subdomainStore.id;
+                }
+            }
+        }
+
+        // 3. Fallback: Get the first active store (default)
+        // This ensures the app always loads SOMETHING, acting as the "main" store
+        if (!storeId) {
+            const { data: defaultStore } = await supabase
+                .from('stores')
+                .select('id')
+                .eq('is_active', true)
+                .order('created_at', { ascending: true })
+                .limit(1)
+                .single();
+
+            if (defaultStore) {
+                storeId = defaultStore.id;
+            }
+        }
+
+        // Set store ID in request headers for server components to read
+        if (storeId) {
+            response.headers.set('x-store-id', storeId);
+            if (storeDomain) {
+                response.headers.set('x-store-domain', storeDomain);
+            }
+        }
+
+    } catch (error) {
+        console.error('Middleware store resolution error:', error);
+        // Continue without store resolution on error, allow app to handle missing context
+    }
 
     return response;
 }
 
-// Configure which paths the middleware runs on
 export const config = {
+    // Matcher ignoring static files and assets
     matcher: [
-        /*
-         * Match all request paths except:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public files (public folder)
-         */
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 };

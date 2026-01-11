@@ -15,15 +15,22 @@ interface Store {
     created_at: string;
 }
 
+import { CloneStoreModal } from '@/components/admin/clone-store-modal';
+
 export default function StoresPage() {
     const [stores, setStores] = useState<Store[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Modal State
+    const [isCloneModalOpen, setIsCloneModalOpen] = useState(false);
+    const [storeToClone, setStoreToClone] = useState<{ id: string; name: string } | null>(null);
 
     useEffect(() => {
         fetchStores();
     }, []);
 
     async function fetchStores() {
+        setLoading(true);
         const supabase = createBrowserClient();
         const { data, error } = await supabase
             .from('stores')
@@ -56,33 +63,63 @@ export default function StoresPage() {
         fetchStores();
     }
 
-    async function cloneStore(storeId: string, storeName: string) {
-        if (!confirm(`Clone "${storeName}" with all products and discounts?`)) {
-            return;
-        }
+    // Open modal instead of immediately cloning
+    function handleCloneClick(store: Store) {
+        setStoreToClone({ id: store.id, name: store.name });
+        setIsCloneModalOpen(true);
+    }
+
+    async function executeClone(mode: 'full' | 'design') {
+        if (!storeToClone) return;
+
+        // Close modal immediately to show responsiveness (could add a spinner here instead)
+        setIsCloneModalOpen(false);
+        const toastId = alert('Cloning store... please wait.'); // Simple feedback, could be better
 
         try {
+            // Get current user to ensure ownership
+            const supabase = createBrowserClient();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                alert('You must be logged in to clone a store.');
+                return;
+            }
+
             const response = await fetch('/api/stores/clone', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ storeId }),
+                body: JSON.stringify({
+                    storeId: storeToClone.id,
+                    mode: mode,
+                    userId: user.id // Pass user ID explicitly
+                }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                alert(`Store cloned! ${data.cloned.products} products, ${data.cloned.discounts} discounts copied.`);
+                alert(`Store cloned successfully! (${mode === 'full' ? 'Full Clone' : 'Design Only'})`);
                 fetchStores();
             } else {
                 alert('Failed to clone store: ' + data.error);
             }
         } catch (error) {
             alert('Failed to clone store');
+        } finally {
+            setStoreToClone(null);
         }
     }
 
     return (
         <div className="p-8">
+            <CloneStoreModal
+                isOpen={isCloneModalOpen}
+                onClose={() => setIsCloneModalOpen(false)}
+                onConfirm={executeClone}
+                storeName={storeToClone?.name || ''}
+            />
+
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -183,7 +220,7 @@ export default function StoresPage() {
                                         {store.is_active ? 'Pause' : 'Activate'}
                                     </button>
                                     <button
-                                        onClick={() => cloneStore(store.id, store.name)}
+                                        onClick={() => handleCloneClick(store)}
                                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         title="Clone Store"
                                     >
