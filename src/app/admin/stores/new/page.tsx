@@ -96,14 +96,14 @@ export default function NewStorePage() {
         <div className="p-8 max-w-4xl">
             {/* Header */}
             <div className="mb-8">
-                <Link href="/admin/stores" className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-4">
+                <Link href="/admin/stores" className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1 mb-4">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                     Back to Stores
                 </Link>
-                <h1 className="text-3xl font-bold text-gray-900">Create New Store</h1>
-                <p className="text-gray-600 mt-1">Set up a new multi-tenant store</p>
+                <h1 className="text-3xl font-bold text-slate-900">Create New Store</h1>
+                <p className="text-slate-600 mt-1">Set up a new multi-tenant store</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -114,51 +114,51 @@ export default function NewStorePage() {
                 )}
 
                 {/* Basic Info */}
-                <div className="bg-white rounded-xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+                <div className="bg-white rounded-xl p-6 border border-slate-100">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Basic Information</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Store Name *</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Store Name *</label>
                             <input
                                 type="text"
                                 value={form.name}
                                 onChange={(e) => handleNameChange(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                                 placeholder="My Awesome Store"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Slug *</label>
                             <div className="flex items-center">
-                                <span className="text-gray-400 mr-1">/</span>
+                                <span className="text-slate-400 mr-1">/</span>
                                 <input
                                     type="text"
                                     value={form.slug}
                                     onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                                     placeholder="my-awesome-store"
                                     required
                                 />
                             </div>
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Custom Domain (optional)</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Custom Domain (optional)</label>
                             <input
                                 type="text"
                                 value={form.domain}
                                 onChange={(e) => setForm({ ...form, domain: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                                 placeholder="mystore.com"
                             />
-                            <p className="text-xs text-gray-500 mt-1">Point your domain's A record to Vercel for this to work</p>
+                            <p className="text-xs text-slate-500 mt-1">Point your domain's A record to Vercel for this to work</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Theme Selection */}
-                <div className="bg-white rounded-xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Theme</h2>
+                <div className="bg-white rounded-xl p-6 border border-slate-100">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Theme</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {themes.map((theme) => (
                             <button
@@ -166,31 +166,31 @@ export default function NewStorePage() {
                                 type="button"
                                 onClick={() => setForm({ ...form, theme: theme.id })}
                                 className={`p-4 rounded-lg border-2 text-left transition-colors ${form.theme === theme.id
-                                        ? 'border-green-500 bg-green-50'
-                                        : 'border-gray-200 hover:border-gray-300'
+                                        ? 'border-[#1e3a5f] bg-slate-50'
+                                        : 'border-slate-200 hover:border-slate-300'
                                     }`}
                             >
-                                <p className="font-medium text-gray-900">{theme.name}</p>
-                                <p className="text-sm text-gray-500 mt-1">{theme.description}</p>
+                                <p className="font-medium text-slate-900">{theme.name}</p>
+                                <p className="text-sm text-slate-500 mt-1">{theme.description}</p>
                             </button>
                         ))}
                     </div>
                 </div>
 
                 {/* Colors */}
-                <div className="bg-white rounded-xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Colors</h2>
+                <div className="bg-white rounded-xl p-6 border border-slate-100">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Colors</h2>
 
                     {/* Presets */}
                     <div className="mb-4">
-                        <p className="text-sm text-gray-600 mb-2">Quick Presets:</p>
+                        <p className="text-sm text-slate-600 mb-2">Quick Presets:</p>
                         <div className="flex flex-wrap gap-2">
                             {colorPresets.map((preset) => (
                                 <button
                                     key={preset.name}
                                     type="button"
                                     onClick={() => applyColorPreset(preset)}
-                                    className="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50"
+                                    className="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-slate-50"
                                 >
                                     <div
                                         className="w-4 h-4 rounded-full"
@@ -204,7 +204,7 @@ export default function NewStorePage() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Primary</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Primary</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="color"
@@ -221,7 +221,7 @@ export default function NewStorePage() {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Accent</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Accent</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="color"
@@ -238,7 +238,7 @@ export default function NewStorePage() {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Background</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Background</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="color"
@@ -255,7 +255,7 @@ export default function NewStorePage() {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Text</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Text</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="color"
@@ -275,38 +275,38 @@ export default function NewStorePage() {
                 </div>
 
                 {/* Trust Badge */}
-                <div className="bg-white rounded-xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Trust Badge</h2>
+                <div className="bg-white rounded-xl p-6 border border-slate-100">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Trust Badge</h2>
                     <input
                         type="text"
                         value={form.trust_badge_text}
                         onChange={(e) => setForm({ ...form, trust_badge_text: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                         placeholder="Free Shipping Over $50"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Displayed in the header trust banner</p>
+                    <p className="text-xs text-slate-500 mt-1">Displayed in the header trust banner</p>
                 </div>
 
                 {/* SEO */}
-                <div className="bg-white rounded-xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">SEO Settings</h2>
+                <div className="bg-white rounded-xl p-6 border border-slate-100">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">SEO Settings</h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Meta Title</label>
                             <input
                                 type="text"
                                 value={form.meta_title}
                                 onChange={(e) => setForm({ ...form, meta_title: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                                 placeholder="My Store - Premium Products"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Meta Description</label>
                             <textarea
                                 value={form.meta_description}
                                 onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
                                 rows={3}
                                 placeholder="Discover premium products at My Store..."
                             />
@@ -319,13 +319,13 @@ export default function NewStorePage() {
                     <button
                         type="submit"
                         disabled={saving}
-                        className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                        className="px-6 py-3 bg-[#1e3a5f] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors disabled:opacity-50"
                     >
                         {saving ? 'Creating...' : 'Create Store'}
                     </button>
                     <Link
                         href="/admin/stores"
-                        className="px-6 py-3 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                        className="px-6 py-3 text-slate-700 font-medium rounded-lg hover:bg-slate-100 transition-colors"
                     >
                         Cancel
                     </Link>
@@ -334,3 +334,5 @@ export default function NewStorePage() {
         </div>
     );
 }
+
+

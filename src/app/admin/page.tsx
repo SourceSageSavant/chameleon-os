@@ -34,14 +34,12 @@ export default function AdminDashboard() {
         async function fetchStats() {
             const supabase = createBrowserClient();
 
-            // Fetch counts
             const [storesRes, productsRes, ordersRes] = await Promise.all([
                 supabase.from('stores').select('id', { count: 'exact', head: true }),
                 supabase.from('products').select('id', { count: 'exact', head: true }),
                 supabase.from('orders').select('id, total', { count: 'exact' }),
             ]);
 
-            // Calculate revenue from orders
             const orders = ordersRes.data || [];
             const revenue = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
 
@@ -52,7 +50,6 @@ export default function AdminDashboard() {
                 revenue,
             });
 
-            // Fetch recent orders
             const { data: recent } = await supabase
                 .from('orders')
                 .select('*')
@@ -66,110 +63,146 @@ export default function AdminDashboard() {
         fetchStats();
     }, []);
 
-    const statCards = [
-        { label: 'Total Stores', value: stats.totalStores, icon: 'store', color: 'bg-blue-500', href: '/admin/stores' },
-        { label: 'Total Products', value: stats.totalProducts, icon: 'package', color: 'bg-green-500', href: '/admin/products' },
-        { label: 'Total Orders', value: stats.totalOrders, icon: 'orders', color: 'bg-purple-500', href: '/admin/orders' },
-        { label: 'Revenue', value: `$${stats.revenue.toFixed(2)}`, icon: 'revenue', color: 'bg-yellow-500', href: '/admin/orders' },
-    ];
-
     return (
         <div className="p-8">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-gray-600 mt-1">Welcome to Chameleon Commerce OS</p>
+                <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+                <p className="text-slate-500 mt-1">Welcome to Chameleon Commerce OS</p>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {statCards.map((stat) => (
-                    <Link
-                        key={stat.label}
-                        href={stat.href}
-                        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-500">{stat.label}</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">
-                                    {loading ? '...' : stat.value}
-                                </p>
-                            </div>
-                            <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                <Link href="/admin/stores" className="bg-white rounded-xl p-5 border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-slate-500 font-medium">Total Stores</p>
+                            <p className="text-2xl font-semibold text-slate-900 mt-1">
+                                {loading ? '—' : stats.totalStores}
+                            </p>
                         </div>
-                    </Link>
-                ))}
+                        <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link href="/admin/products" className="bg-white rounded-xl p-5 border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-slate-500 font-medium">Total Products</p>
+                            <p className="text-2xl font-semibold text-slate-900 mt-1">
+                                {loading ? '—' : stats.totalProducts}
+                            </p>
+                        </div>
+                        <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link href="/admin/orders" className="bg-white rounded-xl p-5 border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-slate-500 font-medium">Total Orders</p>
+                            <p className="text-2xl font-semibold text-slate-900 mt-1">
+                                {loading ? '—' : stats.totalOrders}
+                            </p>
+                        </div>
+                        <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link href="/admin/orders" className="bg-white rounded-xl p-5 border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-slate-500 font-medium">Revenue</p>
+                            <p className="text-2xl font-semibold text-slate-900 mt-1">
+                                {loading ? '—' : `$${stats.revenue.toFixed(2)}`}
+                            </p>
+                        </div>
+                        <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+            {/* Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Quick Actions */}
+                <div className="bg-white rounded-xl p-6 border border-slate-200">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h2>
                     <div className="grid grid-cols-2 gap-4">
                         <Link
                             href="/admin/stores/new"
-                            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-green-500 hover:bg-green-50 transition-colors"
+                            className="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-[#1e3a5f] hover:bg-slate-50 transition-all"
                         >
-                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center">
+                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
                             </div>
                             <div>
-                                <p className="font-medium text-gray-900">New Store</p>
-                                <p className="text-sm text-gray-500">Create a store</p>
+                                <p className="font-medium text-slate-900">New Store</p>
+                                <p className="text-sm text-slate-500">Create a store</p>
                             </div>
                         </Link>
                         <Link
                             href="/admin/products/new"
-                            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                            className="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-[#1e3a5f] hover:bg-slate-50 transition-all"
                         >
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center">
+                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
                             </div>
                             <div>
-                                <p className="font-medium text-gray-900">New Product</p>
-                                <p className="text-sm text-gray-500">Add a product</p>
+                                <p className="font-medium text-slate-900">New Product</p>
+                                <p className="text-sm text-slate-500">Add a product</p>
                             </div>
                         </Link>
                     </div>
                 </div>
 
                 {/* Recent Orders */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-xl p-6 border border-slate-200">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
-                        <Link href="/admin/orders" className="text-sm text-green-600 hover:underline">
+                        <h2 className="text-lg font-semibold text-slate-900">Recent Orders</h2>
+                        <Link href="/admin/orders" className="text-sm text-[#1e3a5f] hover:underline font-medium">
                             View all
                         </Link>
                     </div>
                     {loading ? (
-                        <div className="text-center py-8 text-gray-400">Loading...</div>
+                        <div className="text-center py-8 text-slate-400">Loading...</div>
                     ) : recentOrders.length === 0 ? (
-                        <div className="text-center py-8 text-gray-400">
+                        <div className="text-center py-8 text-slate-400">
                             <p>No orders yet</p>
                             <p className="text-sm">Orders will appear here once customers start buying</p>
                         </div>
                     ) : (
                         <div className="space-y-3">
                             {recentOrders.map((order) => (
-                                <div key={order.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                                <div key={order.id} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
                                     <div>
-                                        <p className="font-medium text-gray-900">Order #{order.order_number}</p>
-                                        <p className="text-sm text-gray-500">{order.customer_email}</p>
+                                        <p className="font-medium text-slate-900">Order #{order.order_number}</p>
+                                        <p className="text-sm text-slate-500">{order.customer_email}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="font-medium text-gray-900">${Number(order.total).toFixed(2)}</p>
+                                        <p className="font-medium text-slate-900">${Number(order.total).toFixed(2)}</p>
                                         <span className={`text-xs px-2 py-1 rounded-full ${order.payment_status === 'paid'
-                                                ? 'bg-green-100 text-green-700'
-                                                : 'bg-yellow-100 text-yellow-700'
+                                                ? 'bg-emerald-100 text-emerald-700'
+                                                : 'bg-amber-100 text-amber-700'
                                             }`}>
                                             {order.payment_status}
                                         </span>
@@ -183,3 +216,4 @@ export default function AdminDashboard() {
         </div>
     );
 }
+
