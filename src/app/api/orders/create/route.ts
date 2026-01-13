@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
-
 function getSupabaseClient() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -35,6 +33,12 @@ async function getNextOrderNumber(supabase: any, storeId: string): Promise<strin
 
 export async function POST(request: NextRequest) {
     try {
+        // Initialize Stripe inside handler to avoid build-time errors
+        if (!process.env.STRIPE_SECRET_KEY) {
+            return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+        }
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
         const { payment_intent_id, line_items, subtotal, shipping_cost, total } = await request.json();
 
         if (!payment_intent_id) {

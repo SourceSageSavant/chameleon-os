@@ -2,21 +2,35 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-12-15.clover' as Stripe.LatestApiVersion,
-});
+// Helper to get initialized clients
+function getClients() {
+    if (!process.env.STRIPE_SECRET_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        return null;
+    }
 
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2025-12-15.clover' as Stripe.LatestApiVersion,
+    });
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    return { stripe, supabase };
+}
 
 /**
  * Creates a Stripe Connect Express account for a store owner
  * and returns an onboarding link
  */
 export async function POST(request: NextRequest) {
+    const clients = getClients();
+    if (!clients) {
+        return NextResponse.json({ error: 'Missing configuration' }, { status: 500 });
+    }
+    const { stripe, supabase } = clients;
+
     try {
         const { storeId, email, businessName, returnUrl } = await request.json();
 
@@ -97,6 +111,12 @@ export async function POST(request: NextRequest) {
  * Get account status for a store
  */
 export async function GET(request: NextRequest) {
+    const clients = getClients();
+    if (!clients) {
+        return NextResponse.json({ error: 'Missing configuration' }, { status: 500 });
+    }
+    const { stripe, supabase } = clients;
+
     const { searchParams } = new URL(request.url);
     const storeId = searchParams.get('storeId');
 

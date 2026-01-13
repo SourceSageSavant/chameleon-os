@@ -2,15 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-12-15.clover' as Stripe.LatestApiVersion,
-});
-
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 // Plan limits mapping
 const PLAN_LIMITS: Record<string, { stores: number; orders: number; ai: number }> = {
     free: { stores: 1, orders: 50, ai: 100 },
@@ -20,6 +11,20 @@ const PLAN_LIMITS: Record<string, { stores: number; orders: number; ai: number }
 };
 
 export async function POST(request: NextRequest) {
+    // Initialize clients inside handler to avoid build-time errors
+    if (!process.env.STRIPE_SECRET_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        return NextResponse.json({ error: 'Missing configuration' }, { status: 500 });
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2025-12-15.clover' as Stripe.LatestApiVersion,
+    });
+
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
     const body = await request.text();
     const sig = request.headers.get('stripe-signature');
 

@@ -2,10 +2,6 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-    apiVersion: '2025-12-15.clover',
-});
-
 // Server-side only Supabase client
 function getSupabaseAdmin() {
     return createClient(
@@ -22,6 +18,14 @@ interface CartItemInput {
 
 export async function POST(request: Request) {
     try {
+        // Initialize Stripe inside handler to avoid build-time errors
+        if (!process.env.STRIPE_SECRET_KEY) {
+            return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+        }
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+            apiVersion: '2025-12-15.clover',
+        });
+
         const body = await request.json();
 
         // Accept structured cart items, NOT raw amount
