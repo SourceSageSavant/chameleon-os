@@ -128,6 +128,17 @@ export default function LaunchPage() {
         cyber: 'from-purple-600 to-blue-600',
     };
 
+    // Helper function to determine step circle styling
+    const getStepStatus = (s: string, i: number): 'active' | 'completed' | 'pending' => {
+        if (step === s || (step === 'launching' && s === 'preview')) {
+            return 'active';
+        }
+        if (step === 'done' || (step === 'preview' && i === 0)) {
+            return 'completed';
+        }
+        return 'pending';
+    };
+
     return (
         <div className="p-8 max-w-4xl mx-auto">
             {/* Header */}
@@ -141,19 +152,22 @@ export default function LaunchPage() {
 
             {/* Progress Steps */}
             <div className="flex items-center justify-center gap-4 mb-12">
-                {['url', 'preview', 'done'].map((s, i) => (
-                    <div key={s} className="flex items-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${step === s || (step === 'launching' && s === 'preview')
-                                ? 'bg-purple-600 text-white'
-                                : step === 'done' || (step === 'preview' && i === 0) || (step === 'done' && i < 2)
-                                    ? 'bg-green-500 text-white'
-                                    : 'bg-slate-200 text-slate-500'
-                            }`}>
-                            {step === 'done' || (step === 'preview' && i === 0) || (step === 'done' && i < 2) ? '✓' : i + 1}
+                {['url', 'preview', 'done'].map((s, i) => {
+                    const status = getStepStatus(s, i);
+                    return (
+                        <div key={s} className="flex items-center">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${status === 'active'
+                                    ? 'bg-purple-600 text-white'
+                                    : status === 'completed'
+                                        ? 'bg-green-500 text-white'
+                                        : 'bg-slate-200 text-slate-500'
+                                }`}>
+                                {status === 'completed' ? '✓' : i + 1}
+                            </div>
+                            {i < 2 && <div className="w-20 h-1 bg-slate-200 mx-2" />}
                         </div>
-                        {i < 2 && <div className="w-20 h-1 bg-slate-200 mx-2" />}
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {error && (

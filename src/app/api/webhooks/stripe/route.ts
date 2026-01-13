@@ -180,10 +180,3 @@ export async function POST(request: NextRequest) {
     // Return 200 for events we don't handle
     return NextResponse.json({ received: true });
 }
-
-// Disable body parsing - Stripe needs raw body for signature verification
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
