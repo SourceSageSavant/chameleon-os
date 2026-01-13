@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
             tax_included: originalStore.tax_included || false,
             is_active: false, // Start as draft
             user_id: userId || originalStore.user_id, // Prefer passed userId, fallback to original
-            user_id: userId || originalStore.user_id, // Prefer passed userId, fallback to original
         };
 
         const { data: newStore, error: createError } = await supabase
